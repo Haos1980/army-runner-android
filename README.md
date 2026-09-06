@@ -16,6 +16,10 @@ Author: Adam (GitHub Haos1980)
 
 From this folder run:
 
+    python3 serve.py
+
+Or:
+
     python3 -m http.server 8080
 
 On the phone open http://YOUR_PC_LAN_IP:8080 then Add to Home Screen.

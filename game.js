@@ -27,7 +27,7 @@
   let playerX = 0;
   let worldZ = 0; // forward progress (meters along track)
   // Speed scale: 1 (wolno) .. 20 (szybko). User asked level 8/20.
-  const SPEED_LEVEL = 8;
+  const SPEED_LEVEL = 6;
   const SPEED_SCALE_MAX = 20;
   const RUN_SPEED_MAX = 10; // units/sec at level 20
   const RUN_SPEED = RUN_SPEED_MAX * (SPEED_LEVEL / SPEED_SCALE_MAX); // 4.0 at level 8

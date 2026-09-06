@@ -1,4 +1,4 @@
-const CACHE = "most-armii-v2";
+const CACHE = "most-armii-v3";
 const ASSETS = [
   "./",
   "./index.html",

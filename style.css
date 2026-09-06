@@ -99,7 +99,10 @@ html, body {
   40% { transform: rotate(90deg); }
   60% { transform: rotate(90deg); }
 }
-@media screen and (orientation: landscape) and (max-height: 500px) {
+@media screen and (orientation: portrait) {
   #rotate-lock { display: flex; }
-  #game, #ui-overlay { visibility: hidden; }
+  #game, #ui-overlay { visibility: hidden; pointer-events: none; }
+}
+@media screen and (orientation: landscape) {
+  #rotate-lock { display: none; }
 }

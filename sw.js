@@ -1,4 +1,4 @@
-const CACHE = "most-armii-v12";
+const CACHE = "most-armii-v13";
 
 self.addEventListener("install", (e) => {
   self.skipWaiting();

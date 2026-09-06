@@ -938,6 +938,6 @@
   }
 
   resize();
-    resetLevel();
+  resetLevel();
   requestAnimationFrame(loop);
 })();

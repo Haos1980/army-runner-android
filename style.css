@@ -145,6 +145,11 @@ html, body {
   text-shadow: 0 1px 2px #000;
 }
 
+#btn-fire.armed {
+  border-color: #7dff9a;
+  background: radial-gradient(circle at 35% 30%, #ffaa66, #e33 55%, #900);
+  box-shadow: 0 0 18px rgba(255,120,40,0.65), 0 6px 18px rgba(0,0,0,0.45);
+}
 #btn-fire:active,
 #btn-fire.pressed {
   transform: scale(0.94);

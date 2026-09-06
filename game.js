@@ -11,9 +11,9 @@
   const unitCountEl = document.getElementById("unit-count");
   const hintEl = document.getElementById("hint");
 
-  // Logical design size (portrait)
-  const W = 360;
-  const H = 640;
+  // Logical design size (landscape)
+  const W = 640;
+  const H = 360;
 
   let dpr = 1;
   let lastTs = 0;
@@ -52,16 +52,16 @@
   let titlePulse = 0;
 
 
-  function lockPortrait() {
+  function lockLandscape() {
     try {
       const o = screen.orientation || screen.mozOrientation || screen.msOrientation;
       if (o && o.lock) {
-        o.lock("portrait").catch(function () {});
-        o.lock("portrait-primary").catch(function () {});
+        o.lock("landscape").catch(function () {});
+        o.lock("landscape-primary").catch(function () {});
       } else if (screen.lockOrientation) {
-        screen.lockOrientation("portrait");
+        screen.lockOrientation("landscape");
       } else if (screen.mozLockOrientation) {
-        screen.mozLockOrientation("portrait");
+        screen.mozLockOrientation("landscape");
       }
     } catch (e) {}
   }
@@ -77,17 +77,17 @@
   }
 
   function worldToScreen(x, z) {
-    // Perspective: z ahead maps up the screen; x is left-right
+    // Landscape: path runs toward top of wide screen; x is left-right
     const camZ = worldZ - 2.5;
     const rel = z - camZ;
     const near = 1.2;
-    const far = 55;
+    const far = 48;
     if (rel < near * 0.4) return null;
     const t = (rel - near) / (far - near);
-    const scale = 1 / (0.35 + rel * 0.085);
-    const sx = W / 2 + x * 28 * scale;
-    const sy = H * 0.78 - Math.log(1 + rel * 0.55) * 145;
-    const s = Math.max(2, 14 * scale);
+    const scale = 1 / (0.32 + rel * 0.075);
+    const sx = W / 2 + x * 42 * scale;
+    const sy = H * 0.82 - Math.log(1 + rel * 0.55) * 95;
+    const s = Math.max(2, 12 * scale);
     return { sx, sy, s, scale, alpha: 1 - Math.max(0, t) * 0.15 };
   }
 
@@ -237,7 +237,7 @@
 
   function startGame() {
     resetLevel();
-    lockPortrait();
+    lockLandscape();
     state = "playing";
     hud.classList.remove("hidden");
     hintEl.classList.remove("hidden");
@@ -419,7 +419,7 @@
       e.fighting = false;
       e.count = 0;
       fightTarget = null;
-      lockPortrait();
+      lockLandscape();
     state = "playing";
       burst(e.x, e.z, "#ff6", 24);
       cameraShake = 0.4;
@@ -941,7 +941,7 @@
   }
 
   resize();
-  lockPortrait();
+  lockLandscape();
   resetLevel();
   requestAnimationFrame(loop);
 })();

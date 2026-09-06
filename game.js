@@ -26,9 +26,13 @@
   let unitCount = 1;
   let playerX = 0;
   let worldZ = 0; // forward progress (meters along track)
-  const RUN_SPEED = 8; // units/sec
+  // Speed scale: 1 (wolno) .. 20 (szybko). User asked level 8/20.
+  const SPEED_LEVEL = 8;
+  const SPEED_SCALE_MAX = 20;
+  const RUN_SPEED_MAX = 10; // units/sec at level 20
+  const RUN_SPEED = RUN_SPEED_MAX * (SPEED_LEVEL / SPEED_SCALE_MAX); // 4.0 at level 8
   const LANE_HALF = 5.2;
-  const FIGHT_SPEED = 6;
+  const FIGHT_SPEED = Math.max(1.2, RUN_SPEED * 0.55);
 
   // Visual crowd particles (for rendering, capped)
   const MAX_VIS = 80;

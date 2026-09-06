@@ -11,9 +11,10 @@
   const unitCountEl = document.getElementById("unit-count");
   const hintEl = document.getElementById("hint");
 
-  // Logical design size (landscape)
-  const W = 640;
-  const H = 360;
+  // Logical design size — adapts to portrait or landscape
+  let W = 360;
+  let H = 640;
+  let isLandscape = false;
 
   let dpr = 1;
   let lastTs = 0;
@@ -52,19 +53,6 @@
   let titlePulse = 0;
 
 
-  function lockLandscape() {
-    try {
-      const o = screen.orientation || screen.mozOrientation || screen.msOrientation;
-      if (o && o.lock) {
-        o.lock("landscape").catch(function () {});
-        o.lock("landscape-primary").catch(function () {});
-      } else if (screen.lockOrientation) {
-        screen.lockOrientation("landscape");
-      } else if (screen.mozLockOrientation) {
-        screen.mozLockOrientation("landscape");
-      }
-    } catch (e) {}
-  }
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2.5);
@@ -74,20 +62,31 @@
     canvas.height = Math.floor(vh * dpr);
     canvas.style.width = vw + "px";
     canvas.style.height = vh + "px";
+    isLandscape = vw > vh;
+    if (isLandscape) {
+      W = 640;
+      H = 360;
+    } else {
+      W = 360;
+      H = 640;
+    }
   }
 
   function worldToScreen(x, z) {
-    // Landscape: path runs toward top of wide screen; x is left-right
+    // Path runs "up" the screen; x is left-right. Tuned for both orientations.
     const camZ = worldZ - 2.5;
     const rel = z - camZ;
     const near = 1.2;
-    const far = 48;
+    const far = isLandscape ? 48 : 55;
     if (rel < near * 0.4) return null;
     const t = (rel - near) / (far - near);
-    const scale = 1 / (0.32 + rel * 0.075);
-    const sx = W / 2 + x * 42 * scale;
-    const sy = H * 0.82 - Math.log(1 + rel * 0.55) * 95;
-    const s = Math.max(2, 12 * scale);
+    const scale = 1 / ((isLandscape ? 0.32 : 0.35) + rel * (isLandscape ? 0.075 : 0.085));
+    const xMul = isLandscape ? 42 : 28;
+    const yMul = isLandscape ? 95 : 145;
+    const baseS = isLandscape ? 12 : 14;
+    const sx = W / 2 + x * xMul * scale;
+    const sy = H * (isLandscape ? 0.82 : 0.78) - Math.log(1 + rel * 0.55) * yMul;
+    const s = Math.max(2, baseS * scale);
     return { sx, sy, s, scale, alpha: 1 - Math.max(0, t) * 0.15 };
   }
 
@@ -237,8 +236,7 @@
 
   function startGame() {
     resetLevel();
-    lockLandscape();
-    state = "playing";
+        state = "playing";
     hud.classList.remove("hidden");
     hintEl.classList.remove("hidden");
     hintTimer = 3.5;
@@ -419,8 +417,7 @@
       e.fighting = false;
       e.count = 0;
       fightTarget = null;
-      lockLandscape();
-    state = "playing";
+          state = "playing";
       burst(e.x, e.z, "#ff6", 24);
       cameraShake = 0.4;
     }
@@ -941,7 +938,6 @@
   }
 
   resize();
-  lockLandscape();
-  resetLevel();
+    resetLevel();
   requestAnimationFrame(loop);
 })();

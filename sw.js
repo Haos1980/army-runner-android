@@ -1,4 +1,4 @@
-const CACHE = "most-armii-v9";
+const CACHE = "most-armii-v10";
 const ASSETS = ["./", "./index.html", "./style.css", "./manifest.json", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {

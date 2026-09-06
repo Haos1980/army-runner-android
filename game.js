@@ -191,7 +191,7 @@
     gates = []; barrels = []; pillars = []; enemies = []; formations = [];
     projectiles = []; enemyShots = []; particles = []; floatTexts = [];
     fightTarget = null; cameraShake = 0; fireCooldown = 0; muzzleFlash = 0;
-    playerHitFlash = 0; winTimer = 0; moveInput = 0; fireHeld = false;
+    playerHitFlash = 0; winTimer = 0; moveInput = 0; setFireArmed(false);
     bannerText = ""; bannerTimer = 0; crowd = [];
     for (let i = 0; i < 12; i++) spawnCrowdDot();
     recalcPlayerHp(false);
@@ -398,24 +398,27 @@
     moveInput = Math.max(-1, Math.min(1, ((clientX - rect.left) / rect.width) * 2 - 1));
     setStickVisual(moveInput);
   }
-  function bindHold(el, on, off) {
-    const start = (e) => { e.preventDefault(); e.stopPropagation(); on(e); };
-    const end = (e) => { e.preventDefault(); e.stopPropagation(); off(e); };
-    el.addEventListener("mousedown", start);
-    el.addEventListener("touchstart", start, { passive: false });
-    window.addEventListener("mouseup", end);
-    window.addEventListener("touchend", end, { passive: false });
-    window.addEventListener("touchcancel", end, { passive: false });
+  function setFireArmed(on) {
+    fireHeld = !!on;
+    btnFire.classList.toggle("pressed", fireHeld);
+    btnFire.classList.toggle("armed", fireHeld);
+    btnFire.textContent = fireHeld ? "OGIEŃ ON" : "OGIEŃ";
   }
-  bindHold(btnFire,
-    () => {
-      fireHeld = true; btnFire.classList.add("pressed");
-      if (state === "title") startGame();
-      else if (state === "win" || state === "lose") { state = "title"; showControls(false); }
-      else tryFire();
-    },
-    () => { fireHeld = false; btnFire.classList.remove("pressed"); }
-  );
+  function toggleFire() {
+    if (state === "title") { startGame(); setFireArmed(true); tryFire(); return; }
+    if (state === "win" || state === "lose") { state = "title"; showControls(false); setFireArmed(false); return; }
+    if (state === "upgrade") return;
+    setFireArmed(!fireHeld);
+    if (fireHeld) tryFire();
+  }
+  function onFirePointer(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFire();
+  }
+  btnFire.addEventListener("mousedown", onFirePointer);
+  btnFire.addEventListener("touchstart", onFirePointer, { passive: false });
+  // Never clear fire from window touchend — right stick must not kill shooting.
   movePad.addEventListener("mousedown", (e) => { e.preventDefault(); e.stopPropagation(); padPointer(e.clientX); if (state === "title") startGame(); });
   movePad.addEventListener("mousemove", (e) => { if (e.buttons) padPointer(e.clientX); });
   movePad.addEventListener("mouseup", () => { moveInput = keys.left || keys.right ? moveInput : 0; if (!keys.left && !keys.right) setStickVisual(0); });
@@ -456,7 +459,7 @@
     if (e.code === "ArrowRight" || e.code === "KeyD") { keys.right = true; moveInput = 1; setStickVisual(1); }
     if (e.code === "Space" || e.code === "KeyZ") {
       e.preventDefault();
-      if (!keys.fire) { keys.fire = true; fireHeld = true; if (state === "title") startGame(); else tryFire(); }
+      if (!keys.fire) { keys.fire = true; toggleFire(); }
     }
     if (e.code === "Digit1" && state === "upgrade" && upgradeChoices[0]) pickUpgrade(upgradeChoices[0].id);
     if (e.code === "Digit2" && state === "upgrade" && upgradeChoices[1]) pickUpgrade(upgradeChoices[1].id);
@@ -468,7 +471,7 @@
   window.addEventListener("keyup", (e) => {
     if (e.code === "ArrowLeft" || e.code === "KeyA") { keys.left = false; moveInput = keys.right ? 1 : 0; setStickVisual(moveInput); }
     if (e.code === "ArrowRight" || e.code === "KeyD") { keys.right = false; moveInput = keys.left ? -1 : 0; setStickVisual(moveInput); }
-    if (e.code === "Space" || e.code === "KeyZ") { keys.fire = false; fireHeld = false; }
+    if (e.code === "Space" || e.code === "KeyZ") { keys.fire = false; /* latch stays until toggle again */ }
   });
 
   function hitEnemy(en, dmg) {
@@ -1111,7 +1114,7 @@
     ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("DOTKNIJ ABY GRAĆ", 0, 2);
     ctx.restore();
     ctx.font = "13px system-ui"; ctx.fillStyle = "rgba(255,255,255,0.8)";
-    ctx.fillText("Lewy: OGIEŃ  ·  Prawy: RUCH  ·  Bez auto-strzału", W / 2, H * 0.72);
+    ctx.fillText("Lewy: włącz/wyłącz ogień  ·  Prawy: tylko ruch", W / 2, H * 0.72);
     ctx.fillText("Bramy +/× · Beczki · Formacje · Boss z pierścieniem", W / 2, H * 0.72 + 18);
     ctx.fillText("Ulepszenia: dmg " + upgrades.dmg + " · rate " + upgrades.rate + " · hp " + upgrades.hp, W / 2, H * 0.72 + 38);
   }

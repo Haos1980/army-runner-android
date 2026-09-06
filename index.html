@@ -13,16 +13,28 @@
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <title>Most Armii — HAOS Runner</title>
-  <link rel="stylesheet" href="style.css?v=12" />
+  <link rel="stylesheet" href="style.css?v=13" />
 </head>
 <body>
   <div id="ui-overlay">
     <div id="hud" class="hidden">
       <div id="count-badge">Armia: <span id="unit-count">1</span></div>
+      <div id="hp-wrap">
+        <div id="hp-label">HP</div>
+        <div id="hp-bar"><div id="hp-fill"></div></div>
+        <div id="hp-text"><span id="hp-cur">0</span>/<span id="hp-max">0</span></div>
+      </div>
     </div>
-    <div id="hint" class="hidden">PRZESUŃ W LEWO / PRAWO</div>
+    <div id="hint" class="hidden">LEWO: Ogień · PRAWO: Ruch</div>
+    <div id="controls" class="hidden">
+      <button type="button" id="btn-fire" aria-label="Strzał">OGIEŃ</button>
+      <div id="move-pad" aria-label="Ruch">
+        <div id="move-stick"></div>
+        <div id="move-hint">← RUCH →</div>
+      </div>
+    </div>
   </div>
   <canvas id="game"></canvas>
-  <script src="game.js?v=12"></script>
+  <script src="game.js?v=13"></script>
 </body>
 </html>

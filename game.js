@@ -73,7 +73,7 @@
   }
 
   function resetLevel() {
-    unitCount = 1;
+    unitCount = 3;
     playerX = 0;
     worldZ = 0;
     gates = [];
@@ -109,8 +109,8 @@
       z: 42,
       x: 0,
       w: 8,
-      count: 28,
-      max: 28,
+      count: 22,
+      max: 22,
       hit: false,
       fighting: false,
     });
@@ -128,8 +128,8 @@
       z: 72,
       x: 0,
       w: 9,
-      count: 55,
-      max: 55,
+      count: 40,
+      max: 40,
       hit: false,
       fighting: false,
     });
@@ -142,8 +142,8 @@
     boss = {
       z: 95,
       x: 0,
-      hp: 120,
-      maxHp: 120,
+      hp: 90,
+      maxHp: 90,
       hit: false,
       fighting: false,
       phase: 0,
@@ -304,7 +304,7 @@
         // Gate collisions
         gates.forEach((g) => {
           if (g.hit) return;
-          if (Math.abs(g.z - worldZ) < 0.6 && Math.abs(g.x - playerX) < g.w * 0.55) {
+          if (g.z - worldZ < 0.85 && g.z - worldZ > -0.35 && Math.abs(g.x - playerX) < g.w * 0.6) {
             applyGate(g);
           }
         });

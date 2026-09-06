@@ -26,7 +26,7 @@
   let unitCount = 1;
   let playerX = 0;
   let worldZ = 0; // forward progress (meters along track)
-  const RUN_SPEED = 0.35; // units/sec
+  const RUN_SPEED = 8; // units/sec
   const LANE_HALF = 5.2;
   const FIGHT_SPEED = 6;
 

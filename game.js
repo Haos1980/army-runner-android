@@ -26,7 +26,7 @@
   let unitCount = 1;
   let playerX = 0;
   let worldZ = 0; // forward progress (meters along track)
-  const RUN_SPEED = 4; // units/sec
+  const RUN_SPEED = 1; // units/sec
   const LANE_HALF = 5.2;
   const FIGHT_SPEED = 6;
 
@@ -551,7 +551,7 @@
         const oz = r * 0.45;
         const p = worldToScreen(e.x + ox, e.z + oz);
         if (!p) continue;
-        drawUnit(p.sx, p.sy, p.s * 0.9, "#e33", "#a11");
+        drawZombie(p.sx, p.sy, p.s * 0.95);
         drawn++;
       }
     }
@@ -574,21 +574,17 @@
     const p = worldToScreen(boss.x, boss.z);
     if (!p) return;
     const s = p.s * 3.5;
-    // body
-    ctx.fillStyle = "#c43";
+    // giant undead boss
+    drawZombie(p.sx, p.sy, s * 0.85);
+    // extra bulk
+    ctx.fillStyle = "rgba(80,40,40,0.35)";
     ctx.beginPath();
-    ctx.ellipse(p.sx, p.sy - s * 0.3, s * 0.7, s * 1.1, 0, 0, Math.PI * 2);
+    ctx.ellipse(p.sx, p.sy + s * 0.2, s * 0.9, s * 0.35, 0, 0, Math.PI * 2);
     ctx.fill();
-    // head
-    ctx.fillStyle = "#e85";
-    ctx.beginPath();
-    ctx.arc(p.sx, p.sy - s * 1.3, s * 0.45, 0, Math.PI * 2);
-    ctx.fill();
-    // eyes
     ctx.fillStyle = "#ff0";
     ctx.beginPath();
-    ctx.arc(p.sx - s * 0.15, p.sy - s * 1.35, s * 0.1, 0, Math.PI * 2);
-    ctx.arc(p.sx + s * 0.15, p.sy - s * 1.35, s * 0.1, 0, Math.PI * 2);
+    ctx.arc(p.sx - s * 0.2, p.sy - s * 1.05, s * 0.12, 0, Math.PI * 2);
+    ctx.arc(p.sx + s * 0.22, p.sy - s * 1.0, s * 0.12, 0, Math.PI * 2);
     ctx.fill();
     // HP bar
     const bw = 80;
@@ -605,23 +601,118 @@
     ctx.fillText(boss.hp + " HP", p.sx, p.sy - s * 2.05 + 6);
   }
 
-  function drawUnit(sx, sy, s, fill, stroke) {
-    ctx.fillStyle = fill;
+  function drawSoldier(sx, sy, s) {
+    const h = s * 1.2;
+    ctx.lineCap = "round";
+    // legs (camo pants)
+    ctx.strokeStyle = "#2a3a28";
+    ctx.lineWidth = Math.max(1.2, s * 0.2);
     ctx.beginPath();
-    ctx.arc(sx, sy - s * 0.15, s * 0.55, 0, Math.PI * 2);
-    ctx.fill();
-    // body capsule
-    ctx.beginPath();
-    ctx.ellipse(sx, sy + s * 0.35, s * 0.4, s * 0.55, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = 1;
+    ctx.moveTo(sx - s * 0.16, sy + h * 0.5);
+    ctx.lineTo(sx - s * 0.26, sy + h * 0.98);
+    ctx.moveTo(sx + s * 0.16, sy + h * 0.5);
+    ctx.lineTo(sx + s * 0.26, sy + h * 0.98);
     ctx.stroke();
-    // helmet shine
-    ctx.fillStyle = "rgba(255,255,255,0.35)";
+    // torso vest
+    ctx.fillStyle = "#3d5c3a";
+    ctx.fillRect(sx - s * 0.3, sy - h * 0.08, s * 0.6, h * 0.55);
+    ctx.fillStyle = "#2f4a2c";
+    ctx.fillRect(sx - s * 0.28, sy + h * 0.05, s * 0.56, h * 0.12);
+    // rifle
+    ctx.strokeStyle = "#111";
+    ctx.lineWidth = Math.max(1.6, s * 0.18);
     ctx.beginPath();
-    ctx.arc(sx - s * 0.15, sy - s * 0.3, s * 0.15, 0, Math.PI * 2);
+    ctx.moveTo(sx + s * 0.15, sy + h * 0.05);
+    ctx.lineTo(sx + s * 1.05, sy - h * 0.28);
+    ctx.stroke();
+    ctx.strokeStyle = "#444";
+    ctx.lineWidth = Math.max(1, s * 0.1);
+    ctx.beginPath();
+    ctx.moveTo(sx + s * 0.55, sy - h * 0.05);
+    ctx.lineTo(sx + s * 0.55, sy + h * 0.12);
+    ctx.stroke();
+    // arm
+    ctx.strokeStyle = "#c4a882";
+    ctx.lineWidth = Math.max(1.1, s * 0.14);
+    ctx.beginPath();
+    ctx.moveTo(sx + s * 0.25, sy + h * 0.08);
+    ctx.lineTo(sx + s * 0.7, sy - h * 0.12);
+    ctx.stroke();
+    // head
+    ctx.fillStyle = "#c4a882";
+    ctx.beginPath();
+    ctx.arc(sx, sy - h * 0.28, s * 0.26, 0, Math.PI * 2);
     ctx.fill();
+    // helmet
+    ctx.fillStyle = "#2f4a2c";
+    ctx.beginPath();
+    ctx.ellipse(sx, sy - h * 0.38, s * 0.32, s * 0.2, 0, Math.PI, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(sx - s * 0.32, sy - h * 0.38, s * 0.64, s * 0.12);
+    // visor
+    ctx.fillStyle = "#111";
+    ctx.fillRect(sx - s * 0.2, sy - h * 0.3, s * 0.4, s * 0.08);
+  }
+
+  function drawZombie(sx, sy, s) {
+    const h = s * 1.2;
+    ctx.lineCap = "round";
+    // crooked legs
+    ctx.strokeStyle = "#3a4a2a";
+    ctx.lineWidth = Math.max(1.2, s * 0.2);
+    ctx.beginPath();
+    ctx.moveTo(sx - s * 0.18, sy + h * 0.48);
+    ctx.lineTo(sx - s * 0.38, sy + h * 0.98);
+    ctx.moveTo(sx + s * 0.12, sy + h * 0.48);
+    ctx.lineTo(sx + s * 0.42, sy + h * 0.92);
+    ctx.stroke();
+    // rotting torso
+    ctx.fillStyle = "#5a7a42";
+    ctx.fillRect(sx - s * 0.28, sy - h * 0.08, s * 0.56, h * 0.52);
+    ctx.fillStyle = "#8a3030";
+    ctx.fillRect(sx - s * 0.1, sy + h * 0.1, s * 0.18, h * 0.16);
+    // reaching arms
+    ctx.strokeStyle = "#6b8a50";
+    ctx.lineWidth = Math.max(1.1, s * 0.15);
+    ctx.beginPath();
+    ctx.moveTo(sx - s * 0.28, sy + h * 0.02);
+    ctx.lineTo(sx - s * 0.9, sy - h * 0.22);
+    ctx.moveTo(sx + s * 0.28, sy + h * 0.06);
+    ctx.lineTo(sx + s * 0.85, sy - h * 0.08);
+    ctx.stroke();
+    // claws
+    ctx.strokeStyle = "#ddd";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(sx - s * 0.9, sy - h * 0.22);
+    ctx.lineTo(sx - s * 1.05, sy - h * 0.3);
+    ctx.moveTo(sx + s * 0.85, sy - h * 0.08);
+    ctx.lineTo(sx + s * 1.0, sy - h * 0.18);
+    ctx.stroke();
+    // skull-ish head
+    ctx.fillStyle = "#8fa86a";
+    ctx.beginPath();
+    ctx.arc(sx, sy - h * 0.3, s * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+    // hair tuft
+    ctx.fillStyle = "#2a3018";
+    ctx.fillRect(sx - s * 0.2, sy - h * 0.55, s * 0.15, s * 0.18);
+    // red eyes
+    ctx.fillStyle = "#ff2222";
+    ctx.beginPath();
+    ctx.arc(sx - s * 0.1, sy - h * 0.32, s * 0.07, 0, Math.PI * 2);
+    ctx.arc(sx + s * 0.12, sy - h * 0.3, s * 0.07, 0, Math.PI * 2);
+    ctx.fill();
+    // open jaw
+    ctx.fillStyle = "#1a2010";
+    ctx.beginPath();
+    ctx.arc(sx, sy - h * 0.2, s * 0.12, 0.15, Math.PI - 0.15);
+    ctx.fill();
+  }
+
+  function drawUnit(sx, sy, s, fill, stroke) {
+    if (fill === "#3af") drawSoldier(sx, sy, s);
+    else drawZombie(sx, sy, s);
   }
 
   function drawCrowd() {
@@ -631,7 +722,7 @@
       const bob = Math.sin(c.bob) * 0.08;
       const p = worldToScreen(playerX + c.ox, worldZ + c.oz + bob);
       if (!p) return;
-      drawUnit(p.sx, p.sy, p.s, "#3af", "#148");
+      drawSoldier(p.sx, p.sy, p.s);
     });
     // glow under crowd
     const gp = worldToScreen(playerX, worldZ);
@@ -647,15 +738,15 @@
     projectiles.forEach((pr) => {
       const p = worldToScreen(pr.x, pr.z);
       if (!p) return;
-      ctx.strokeStyle = "#8ef";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#ffcc44";
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(p.sx, p.sy);
-      ctx.lineTo(p.sx, p.sy + 10 * p.scale);
+      ctx.moveTo(p.sx, p.sy + 8 * p.scale);
+      ctx.lineTo(p.sx, p.sy - 4 * p.scale);
       ctx.stroke();
-      ctx.fillStyle = "#ff0";
+      ctx.fillStyle = "#fff3a0";
       ctx.beginPath();
-      ctx.arc(p.sx, p.sy, 2.5, 0, Math.PI * 2);
+      ctx.arc(p.sx, p.sy - 4 * p.scale, 2.2, 0, Math.PI * 2);
       ctx.fill();
     });
   }

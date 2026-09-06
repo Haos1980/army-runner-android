@@ -51,6 +51,21 @@
   let winTimer = 0;
   let titlePulse = 0;
 
+
+  function lockPortrait() {
+    try {
+      const o = screen.orientation || screen.mozOrientation || screen.msOrientation;
+      if (o && o.lock) {
+        o.lock("portrait").catch(function () {});
+        o.lock("portrait-primary").catch(function () {});
+      } else if (screen.lockOrientation) {
+        screen.lockOrientation("portrait");
+      } else if (screen.mozLockOrientation) {
+        screen.mozLockOrientation("portrait");
+      }
+    } catch (e) {}
+  }
+
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2.5);
     const vw = window.innerWidth;
@@ -222,6 +237,7 @@
 
   function startGame() {
     resetLevel();
+    lockPortrait();
     state = "playing";
     hud.classList.remove("hidden");
     hintEl.classList.remove("hidden");
@@ -403,7 +419,8 @@
       e.fighting = false;
       e.count = 0;
       fightTarget = null;
-      state = "playing";
+      lockPortrait();
+    state = "playing";
       burst(e.x, e.z, "#ff6", 24);
       cameraShake = 0.4;
     }
@@ -924,6 +941,7 @@
   }
 
   resize();
+  lockPortrait();
   resetLevel();
   requestAnimationFrame(loop);
 })();
